@@ -53,6 +53,7 @@ and in many cases not even very meaningful.
 - Fetching pastes using correct the API key and user name.
 - Storing new pastes in the local DB.
 - Falling back to local DB if data cannot be fetched from the API.
+- Tapping on a Paste item copies it to the clipboard.
 - Error handling and presentation from the bottom all the way to the top on all layers up to the view layer.
 - Force refreshing via an error snackbar to attempt recover from API issues.
 - Full support for orientation change state keeping and state restoration after system induced process 
