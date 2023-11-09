@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="save">Save</string>
+    <string name="title_input_label">Paste Title</string>
+    <string name="content_input_label">Paste Content</string>
+    <string name="refresh">Refresh</string>
+    <string name="pastes_not_found">No pastes found</string>
+</resources>
