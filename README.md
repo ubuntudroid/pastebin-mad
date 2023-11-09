@@ -48,7 +48,7 @@ Here is a quick overview over the modules and what they do:
 Most modules also contain some tests to show how testing might look like. They are by no means complete
 and in many cases not even very meaningful. 
 
-## What works
+## What is implemented
 
 - Fetching pastes using correct the API key and user name.
 - Storing new pastes in the local DB.
@@ -61,7 +61,7 @@ death and restoration (input fields, cursor state, scroll state, navigation stat
 - Dynamic start destination for navigation based on whether the user is logged in or not.
 - Dynamic color theme FWIW.
 
-## What doesn't work or isn't fledged out (mostly because it was out of scope for this project)
+## What's not in here or isn't fledged out (mostly because it was out of scope for this project)
 
 - Log in comes with no form of authentication verification - we store whatever you type in as user
 name and API key and try to use that for loading pastes from the omg.lol API.
