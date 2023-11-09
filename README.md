@@ -1,4 +1,4 @@
-# MAD test project (Sven Bendel)
+# MAD test project
 
 This test project aims at using Jetpack libraries and a multi-module structure as outlined in the
 Modern Android Development docs, but with a twist. It's basically MVVM+ if you will. 
