@@ -1,5 +1,6 @@
 package omg.lol.pastebin.core.database
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -23,6 +24,8 @@ class PasteDbDataSource @Inject constructor(private val pasteDao: PasteDao) : Pa
     override suspend fun insertPaste(item: DbPaste): DataResource<Unit> = try {
         pasteDao.insertPaste(item)
         DataResource.Success(Unit)
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         DataResource.Failure.ClientError(e)
     }
@@ -30,6 +33,8 @@ class PasteDbDataSource @Inject constructor(private val pasteDao: PasteDao) : Pa
     override suspend fun insertPastes(items: List<DbPaste>): DataResource<Unit> = try {
         pasteDao.insertPastes(items)
         DataResource.Success(Unit)
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         DataResource.Failure.ClientError(e)
     }

@@ -87,9 +87,9 @@ Unfortunately Hilt/Dagger only have very rudimentary early KSP support for now.
 
 ## Known bugs (I haven't have time to fix up until now)
 
-- When closing the app via BACK you may see `Client error while fetching and/or storing pastes: Job was cancelled` in the log
+- ~~When closing the app via BACK you may see `Client error while fetching and/or storing pastes: Job was cancelled` in the log
 after previously having entered a paste. Everything will still be saved properly. It's just an
-unhandled `JobCancellationException`.
+unhandled `JobCancellationException`.~~
 - ~~After having logged in for the first time and then pressing back on the Pastes Screen, the screen
 will open once again and it will load its content once more. There likely is a super stupid issue
 in the dynamic start destination handling which is causing this.~~

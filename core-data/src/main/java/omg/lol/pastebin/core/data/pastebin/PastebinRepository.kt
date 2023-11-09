@@ -1,6 +1,7 @@
 package omg.lol.pastebin.core.data.pastebin
 
 import android.util.Log
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -72,6 +73,7 @@ class DefaultPastebinRepository @Inject constructor(
                             pasteLocalDataSource.insertPastes(pastebinDataRes.data.map { it.mapToDbPaste() })
                         when (dataResource) {
                             is DataResource.Success -> {
+                                // collect from local data source
                                 emitAll(
                                     pasteLocalDataSource.getPastes()
                                         .map { items -> items.map { it.map { it.mapToPaste() } } }
@@ -85,6 +87,8 @@ class DefaultPastebinRepository @Inject constructor(
                                 emit(dataResource.mapFailure())
                             }
                         }
+                    } catch (e: CancellationException) {
+                        throw e
                     } catch (e: Exception) {
                         val errorMessage = "Client error while fetching and/or storing pastes: ${e.message}"
                         Log.e(TAG, errorMessage, e)
@@ -115,6 +119,8 @@ class DefaultPastebinRepository @Inject constructor(
                     modifiedOnEpochSec = System.currentTimeMillis().milliseconds.inWholeSeconds
                 )
             )
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             val errorMessage = "Client error while adding a paste: ${e.message}"
             Log.w(TAG, errorMessage, e)

@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -135,6 +136,8 @@ class PasteViewModel @Inject constructor(
                 pasteSavingResource.value = Success(Unit)
                 pasteTitleInput.value = ParcelableTextFieldValue(TextFieldValue())
                 pasteContentInput.value = ParcelableTextFieldValue(TextFieldValue())
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 pasteSavingResource.value = Failure(e)
             }

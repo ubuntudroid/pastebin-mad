@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -79,6 +80,8 @@ class LoginViewModel @Inject constructor(
             try {
                 userRepository.login(name, apiKey)
                 loginResource.value = Success(User(name, apiKey))
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 loginResource.value = Failure(e)
             }
@@ -115,4 +118,4 @@ data class DataState(
     val loginResource: LoginResource? = null
 )
 
-typealias LoginResource = UiResource<omg.lol.pastebin.core.model.user.User>
+typealias LoginResource = UiResource<User>

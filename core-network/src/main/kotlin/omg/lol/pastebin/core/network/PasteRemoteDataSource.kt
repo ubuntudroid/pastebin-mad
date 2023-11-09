@@ -13,6 +13,7 @@ import omg.lol.pastebin.core.network.model.ApiError
 import omg.lol.pastebin.core.network.model.ApiResult
 import omg.lol.pastebin.core.network.model.mapToPaste
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 interface PasteRemoteDataSource {
     suspend fun getPastebin(address: String, apiKey: String): DataResource<List<Paste>>
@@ -62,7 +63,9 @@ class PasteApiDataSource @Inject constructor(
                 e.response.status.value,
                 e.response.getErrorMessage()
             )
-        } catch (e: Throwable) {
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
             // something went wrong while executing the request, likely a network issue
             DataResource.Failure.ClientError(e)
         }
