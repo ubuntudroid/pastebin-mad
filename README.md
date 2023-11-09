@@ -82,12 +82,14 @@ code is.
 - KAPT - yes, it's not an issue with the code per se, but it obviously makes compilation times slower.
 Unfortunately Hilt/Dagger only have very rudimentary early KSP support for now.
 - There is duplicated code in the module build scripts - I might add a convention plugin later on.
+- Type safe navigation as outlined in [Compose Navigation docs](https://developer.android.com/guide/navigation/design/type-safety)
 - Check the TODOs in code for more stuff and details.
 
 ## Known bugs (I haven't have time to fix up until now)
 
 - When closing the app via BACK you may see `Client error while fetching and/or storing pastes: Job was cancelled` in the log
-after previously having entered a paste. Everything will still be saved properly.
-- After having logged in for the first time and then pressing back on the Pastes Screen, the screen
+after previously having entered a paste. Everything will still be saved properly. It's just an
+unhandled `JobCancellationException`.
+- ~~After having logged in for the first time and then pressing back on the Pastes Screen, the screen
 will open once again and it will load its content once more. There likely is a super stupid issue
-in the dynamic start destination handling which is causing this.
+in the dynamic start destination handling which is causing this.~~

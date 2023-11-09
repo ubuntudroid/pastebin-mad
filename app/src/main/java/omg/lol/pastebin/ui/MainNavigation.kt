@@ -17,9 +17,13 @@ import omg.lol.pastebin.core.ui.UiResource.Loading
 import omg.lol.pastebin.core.ui.UiResource.Success
 import omg.lol.pastebin.feature.login.ui.LoginScreen
 import omg.lol.pastebin.feature.pastes.ui.PastesScreen
+import omg.lol.pastebin.nav.popUpToTop
 
 @Composable
-fun MainNavigation(modifier: Modifier = Modifier, viewModel: MainNavigationViewModel = hiltViewModel()) {
+fun MainNavigation(
+    modifier: Modifier = Modifier,
+    viewModel: MainNavigationViewModel = hiltViewModel()
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     with(state) {
         PureMainNavigation(
@@ -51,7 +55,11 @@ internal fun PureMainNavigation(
                 composable("login") {
                     LoginScreen(
                         modifier = Modifier.fillMaxSize(),
-                        onLoginDone = { navController.navigate("pastes") }
+                        onLoginDone = {
+                            navController.navigate("pastes") {
+                                popUpToTop(navController)
+                            }
+                        }
                     )
                 }
             }
