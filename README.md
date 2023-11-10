@@ -40,7 +40,7 @@ Here is a quick overview over the modules and what they do:
 | core-platform | Common platform classes and system service (usually mostly used by middle and lower layers)                        |
 | core-data     | Data layer with repositories                                                                                       |
 | core-database | Local data sources and model definitions (should probably rather be called core-local-storage)                     |
-| core-network  | Remote data sources and model defintions (should probably rather be called core-remote)                            |
+| core-network  | Remote data sources and model definitions (should probably rather be called core-remote)                           |
 | feature-login | Login Screen UI and VM                                                                                             |
 | feature-paste | Pastes Screen UI and VM                                                                                            |
 | test-app      | Instrumentation tests (doesn't work yet)                                                                           |
@@ -55,7 +55,7 @@ and in many cases not even very meaningful.
 - Falling back to local DB if data cannot be fetched from the API.
 - Tapping on a Paste item copies it to the clipboard.
 - Error handling and presentation from the bottom all the way to the top on all layers up to the view layer.
-- Force refreshing via an error snackbar to attempt recover from API issues.
+- Force refreshing via an error snackbar to attempt recovery from API issues.
 - Full support for orientation change state keeping and state restoration after system induced process 
 death and restoration (input fields, cursor state, scroll state, navigation state)
 - Dynamic start destination for navigation based on whether the user is logged in or not.
@@ -65,12 +65,12 @@ death and restoration (input fields, cursor state, scroll state, navigation stat
 
 - Log in comes with no form of authentication verification - we store whatever you type in as user
 name and API key and try to use that for loading pastes from the omg.lol API.
-- You cannot get change your login details after having "logged in" once.
-- When adding a paste you it will only be stored in the database, but never actually be uploaded.
+- You cannot change your login details after having "logged in" once.
+- When adding a paste it will only be stored in the database, but never actually be uploaded.
 - There is no clever caching except for simply storing everything in the local database. The app will
 always attempt to load data freshly from the API when it is started.
 - Error handling is there and works, but there are tons of possible errors (e.g. around logging in)
-which for aren't covered.
+which aren't covered.
 - No localization except for EN.
 - UI is barely serviceable, no animations and fancy layouts and stuff. The focus for this project was
 distinctly on the architectural side of things.
