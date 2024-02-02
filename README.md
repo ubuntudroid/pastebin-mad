@@ -66,7 +66,6 @@ death and restoration (input fields, cursor state, scroll state, navigation stat
 - Log in comes with no form of authentication verification - we store whatever you type in as user
 name and API key and try to use that for loading pastes from the omg.lol API.
 - You cannot change your login details after having "logged in" once.
-- When adding a paste it will only be stored in the database, but never actually be uploaded.
 - There is no clever caching except for simply storing everything in the local database. The app will
 always attempt to load data freshly from the API when it is started.
 - Error handling is there and works, but there are tons of possible errors (e.g. around logging in)
@@ -82,14 +81,4 @@ code is.
 - KAPT - yes, it's not an issue with the code per se, but it obviously makes compilation times slower.
 Unfortunately Hilt/Dagger only have very rudimentary early KSP support for now.
 - There is duplicated code in the module build scripts - I might add a convention plugin later on.
-- Type safe navigation as outlined in [Compose Navigation docs](https://developer.android.com/guide/navigation/design/type-safety)
-- Check the TODOs in code for more stuff and details.
-
-## Known bugs (I haven't have time to fix up until now)
-
-- ~~When closing the app via BACK you may see `Client error while fetching and/or storing pastes: Job was cancelled` in the log
-after previously having entered a paste. Everything will still be saved properly. It's just an
-unhandled `JobCancellationException`.~~
-- ~~After having logged in for the first time and then pressing back on the Pastes Screen, the screen
-will open once again and it will load its content once more. There likely is a super stupid issue
-in the dynamic start destination handling which is causing this.~~
+- Check the TODOs in code as well as the [GitHub issues](https://github.com/ubuntudroid/pastebin-mad/issues) for more stuff and details.
