@@ -2,9 +2,11 @@ package omg.lol.pastebin.core.data.user
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import omg.lol.pastebin.core.database.user.model.DbUser
 import omg.lol.pastebin.core.database.user.model.UserDao
+import omg.lol.pastebin.core.database.user.model.mapToDbUser
 import omg.lol.pastebin.core.database.user.model.mapToUser
 import omg.lol.pastebin.core.model.user.User
 import javax.inject.Inject
@@ -13,6 +15,7 @@ import javax.inject.Inject
 interface UserRepository {
     val user: Flow<User?>
     suspend fun login(name: String, apiKey: String)
+    suspend fun logout()
     val isAuthenticated: Flow<Boolean>
         get() = user.map { it != null }
 }
@@ -32,5 +35,9 @@ class DbBackedUserRepository @Inject constructor(
         // TODO and we would check the validity of the data by making a request to fetch
         //  e.g. account information.
         userDao.insertUser(DbUser(name = name, apiKey = apiKey))
+    }
+
+    override suspend fun logout() {
+        userDao.deleteUser(user.first()?.mapToDbUser() ?: return)
     }
 }

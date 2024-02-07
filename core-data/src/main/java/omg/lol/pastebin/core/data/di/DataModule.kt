@@ -65,6 +65,10 @@ class FakeUserRepository @Inject constructor() : UserRepository {
     override suspend fun login(name: String, apiKey: String) {
         _user.value = User(name, apiKey)
     }
+
+    override suspend fun logout() {
+        _user.value = null
+    }
 }
 
 val fakeUser = User("arthur_dent", "12345")
