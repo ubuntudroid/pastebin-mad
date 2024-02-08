@@ -17,7 +17,7 @@ import omg.lol.pastebin.core.util.sharedFlowSafeOnStart
 import javax.inject.Inject
 
 @HiltViewModel
-class MainNavigationViewModel @Inject constructor(
+class NavigationContainerViewModel @Inject constructor(
     userRepository: UserRepository
 ) : ViewModel() {
 
