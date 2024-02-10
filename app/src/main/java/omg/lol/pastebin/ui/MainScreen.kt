@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import omg.lol.pastebin.R
+import omg.lol.pastebin.feature.account.ui.AccountScreen
 import omg.lol.pastebin.feature.pastes.ui.PastesScreen
 
 @Composable
@@ -47,7 +48,7 @@ internal fun PureMainScreen(
         NavItem(
             label = stringResource(R.string.nav_account),
             icon = Icons.Filled.AccountCircle,
-            screen = { modifier -> Text(text = "Account") }
+            screen = { modifier -> AccountScreen(modifier = modifier) }
         ),
     )
 

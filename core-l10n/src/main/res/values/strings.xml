@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="error_unknown">Unknown error</string>
+    <string name="refresh">Refresh</string>
+    <string name="save">Save</string>
 </resources>

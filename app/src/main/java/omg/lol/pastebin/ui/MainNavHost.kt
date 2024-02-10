@@ -50,7 +50,9 @@ internal fun PureMainNavHost(
                 },
                 modifier = modifier.fillMaxSize()
             ) {
-                composable("main") { MainScreen(modifier = Modifier.fillMaxSize()) }
+                composable("main") {
+                    MainScreen(modifier = Modifier.fillMaxSize())
+                }
                 composable("login") {
                     LoginScreen(
                         modifier = Modifier.fillMaxSize(),

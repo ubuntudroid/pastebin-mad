@@ -11,11 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import omg.lol.pastebin.core.model.paste.Paste
-import omg.lol.pastebin.core.ui.UiResource
 
 @Composable
 fun PastesList(
-    pastesResource: UiResource.Success<List<Paste>>,
+    pastes: List<Paste>,
     onPasteClick: (Paste) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -25,13 +24,13 @@ fun PastesList(
         state = listState,
         modifier = modifier.fillMaxSize()
     ) {
-        itemsIndexed(pastesResource.data) { index, paste ->
+        itemsIndexed(pastes) { index, paste ->
             PasteItem(
                 paste = paste,
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { onPasteClick(paste) }
             )
-            if (index < pastesResource.data.size - 1) {
+            if (index < pastes.size - 1) {
                 Divider()
             }
         }

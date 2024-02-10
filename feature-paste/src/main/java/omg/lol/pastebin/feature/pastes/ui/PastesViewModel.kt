@@ -30,6 +30,7 @@ import omg.lol.pastebin.core.ui.toCatchingUiResourceFlow
 import omg.lol.pastebin.core.util.sharedFlowSafeOnStart
 import omg.lol.pastebin.platform.ClipboardRepository
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 private const val KEY_SAVED_UI_STATE = "uiState"
 
@@ -120,7 +121,11 @@ class PasteViewModel @Inject constructor(
             )
         )
     }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), State())
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5.seconds.inWholeMilliseconds),
+            initialValue = State()
+        )
 
     fun refreshPastes() {
         viewModelScope.launch {

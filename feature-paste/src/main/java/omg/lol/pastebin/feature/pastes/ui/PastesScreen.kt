@@ -5,28 +5,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import omg.lol.pastebin.core.model.paste.Paste
+import omg.lol.pastebin.core.ui.ShowSnackbarForResource
 import omg.lol.pastebin.core.ui.UiResource.Failure
 import omg.lol.pastebin.core.ui.UiResource.Loading
 import omg.lol.pastebin.core.ui.UiResource.Success
 import omg.lol.pastebin.core.ui.theme.PastebinTheme
-import omg.lol.pastebin.feature.pastes.R
 import kotlin.time.Duration.Companion.seconds
-import omg.lol.pastebin.core.l10n.R as CR
 
 @Composable
 fun PastesScreen(modifier: Modifier = Modifier, viewModel: PasteViewModel = hiltViewModel()) {
@@ -62,12 +57,11 @@ internal fun PurePastesScreen(
     onSave: (title: String, content: String) -> Unit,
     onPastesErrorSnackbarRefreshClick: () -> Unit,
     onPasteClick: (Paste) -> Unit,
-
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    ShowSnackbarForPastesResource(
-        pastesResource = pastesResource,
+    ShowSnackbarForResource(
+        resource = pastesResource,
         snackbarHostState = snackbarHostState,
         onRefreshClick = onPastesErrorSnackbarRefreshClick
     )
@@ -75,7 +69,7 @@ internal fun PurePastesScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState)  },
         modifier = modifier,
     ) { scaffoldPadding ->
-        Column(modifier = modifier.padding(scaffoldPadding)) {
+        Column(modifier = Modifier.padding(scaffoldPadding)) {
             PasteInput(
                 pasteTitle = pasteTitle,
                 onTitleInputChange = onTitleInputChange,
@@ -92,37 +86,6 @@ internal fun PurePastesScreen(
                 onPasteClick = onPasteClick,
                 modifier = Modifier.weight(1f)
             )
-        }
-    }
-}
-
-@Composable
-private fun ShowSnackbarForPastesResource(
-    pastesResource: PastesResource?,
-    snackbarHostState: SnackbarHostState,
-    onRefreshClick: () -> Unit
-) {
-    val unknownErrorMessage = stringResource(id = CR.string.error_unknown)
-    val snackbarRefreshActionLabel = stringResource(R.string.refresh)
-    val pastesError = remember(pastesResource) {
-        (pastesResource as? Failure)?.let {
-            it.throwable.message ?: unknownErrorMessage
-        }
-    }
-    // we keep the snackbar on as long as it needs to be (independent, whether the status is back
-    //  to success
-    if (snackbarHostState.currentSnackbarData != null || pastesError != null) {
-        LaunchedEffect(snackbarHostState) {
-            if (pastesError != null) {
-                val result = snackbarHostState.showSnackbar(
-                    message = pastesError,
-                    actionLabel = snackbarRefreshActionLabel,
-                    duration = SnackbarDuration.Long
-                )
-                if (result == SnackbarResult.ActionPerformed) {
-                    onRefreshClick()
-                }
-            }
         }
     }
 }

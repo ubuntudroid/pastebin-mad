@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import omg.lol.pastebin.core.database.pastebin.model.PasteDao
 import omg.lol.pastebin.core.database.user.model.DbUser
 import omg.lol.pastebin.core.database.user.model.UserDao
 import omg.lol.pastebin.core.database.user.model.mapToDbUser
@@ -21,7 +22,8 @@ interface UserRepository {
 }
 
 class DbBackedUserRepository @Inject constructor(
-    private val userDao: UserDao
+    private val userDao: UserDao,
+    private val pasteDao: PasteDao
 ) : UserRepository {
 
     override val user: Flow<User?> = userDao.getUser().map { it?.mapToUser() }
@@ -38,6 +40,7 @@ class DbBackedUserRepository @Inject constructor(
     }
 
     override suspend fun logout() {
+        pasteDao.deleteAllPastes()
         userDao.deleteUser(user.first()?.mapToDbUser() ?: return)
     }
 }

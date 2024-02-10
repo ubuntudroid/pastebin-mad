@@ -69,8 +69,10 @@ dependencies {
     implementation(project(":core-util"))
     implementation(project(":core-data"))
     implementation(project(":core-platform"))
-    implementation(project(":feature-paste"))
     implementation(project(":feature-login"))
+    implementation(project(":feature-account"))
+    implementation(project(":feature-paste"))
+
 
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)

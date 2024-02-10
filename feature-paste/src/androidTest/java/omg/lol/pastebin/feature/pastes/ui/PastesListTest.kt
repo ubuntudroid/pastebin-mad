@@ -27,7 +27,7 @@ class PastesListTest {
     fun setup() {
         composeTestRule.setContent {
             PastesList(
-                pastesResource = UiResource.Success(fakePastes),
+                pastes = UiResource.Success(fakePastes),
                 onPasteClick = {}
             )
         }
