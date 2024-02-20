@@ -1,4 +1,4 @@
-package omg.lol.pastebin.ui
+package omg.lol.pastebin.ui.root
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,17 +16,17 @@ import omg.lol.pastebin.core.ui.UiResource.Failure
 import omg.lol.pastebin.core.ui.UiResource.Loading
 import omg.lol.pastebin.core.ui.UiResource.Success
 import omg.lol.pastebin.feature.login.ui.LoginScreen
-import omg.lol.pastebin.feature.pastes.ui.PastesScreen
 import omg.lol.pastebin.nav.popUpToTop
+import omg.lol.pastebin.ui.main.MainScreen
 
 @Composable
-fun MainNavigation(
+fun MainNavHost(
     modifier: Modifier = Modifier,
-    viewModel: MainNavigationViewModel = hiltViewModel()
+    viewModel: NavigationContainerViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     with(state) {
-        PureMainNavigation(
+        PureRootContainer(
             modifier = modifier,
             isAuthenticatedResource = dataState.isAuthenticatedResource
         )
@@ -34,7 +34,7 @@ fun MainNavigation(
 }
 
 @Composable
-internal fun PureMainNavigation(
+internal fun PureRootContainer(
     modifier: Modifier = Modifier,
     isAuthenticatedResource: IsAuthenticatedResource?
 ) {
@@ -46,17 +46,19 @@ internal fun PureMainNavigation(
                 navController = navController,
                 startDestination = when (isAuthenticatedResource) {
                     is Failure -> "login"
-                    is Success -> if (isAuthenticatedResource.data) "pastes" else "login"
+                    is Success -> if (isAuthenticatedResource.data) "main" else "login"
                     Loading -> throw IllegalStateException("This should never happen")
                 },
                 modifier = modifier.fillMaxSize()
             ) {
-                composable("pastes") { PastesScreen(modifier = Modifier.fillMaxSize()) }
+                composable("main") {
+                    MainScreen(modifier = Modifier.fillMaxSize())
+                }
                 composable("login") {
                     LoginScreen(
                         modifier = Modifier.fillMaxSize(),
                         onLoginDone = {
-                            navController.navigate("pastes") {
+                            navController.navigate("main") {
                                 popUpToTop(navController)
                             }
                         }

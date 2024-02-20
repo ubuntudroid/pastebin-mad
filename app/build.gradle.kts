@@ -69,8 +69,10 @@ dependencies {
     implementation(project(":core-util"))
     implementation(project(":core-data"))
     implementation(project(":core-platform"))
-    implementation(project(":feature-paste"))
     implementation(project(":feature-login"))
+    implementation(project(":feature-account"))
+    implementation(project(":feature-paste"))
+
 
     // Core Android dependencies
     implementation(libs.androidx.core.ktx)
@@ -93,6 +95,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
 
     // Tooling
     debugImplementation(libs.androidx.compose.ui.tooling)

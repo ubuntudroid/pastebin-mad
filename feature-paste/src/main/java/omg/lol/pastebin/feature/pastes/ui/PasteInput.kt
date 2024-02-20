@@ -75,7 +75,7 @@ fun PasteInput(
                             modifier = Modifier.size(24.dp)
                         )
 
-                        else -> Text(stringResource(R.string.save))
+                        else -> Text(stringResource(CR.string.save))
                     }
                 }
             }

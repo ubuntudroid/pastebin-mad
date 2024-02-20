@@ -1,6 +1,7 @@
 package omg.lol.pastebin.core.database.user.model
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -25,6 +26,9 @@ interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(item: DbUser)
+
+    @Delete
+    suspend fun deleteUser(item: DbUser)
 }
 
 fun User.mapToDbUser() = DbUser(name = name, apiKey = apiKey)

@@ -43,7 +43,7 @@ fun PastesContainer(
                         )
                     }
                     PastesList(
-                        pastesResource = pastesResource,
+                        pastes = pastesResource.data,
                         onPasteClick = onPasteClick,
                         modifier = Modifier.fillMaxSize()
                     )

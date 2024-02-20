@@ -8,7 +8,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import omg.lol.pastebin.core.data.di.fakePastes
-import omg.lol.pastebin.core.ui.UiResource
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,7 +26,7 @@ class PastesListTest {
     fun setup() {
         composeTestRule.setContent {
             PastesList(
-                pastesResource = UiResource.Success(fakePastes),
+                pastes = fakePastes,
                 onPasteClick = {}
             )
         }

@@ -1,6 +1,7 @@
 package omg.lol.pastebin.core.database.pastebin.model
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -31,4 +32,13 @@ interface PasteDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPastes(items: List<DbPaste>)
+
+    @Delete
+    suspend fun deletePaste(item: DbPaste)
+
+    @Delete
+    suspend fun deletePastes(items: List<DbPaste>)
+
+    @Query("DELETE FROM dbpaste")
+    suspend fun deleteAllPastes()
 }

@@ -16,4 +16,6 @@
 
 <resources>
     <string name="app_name">Pastebin</string>
+    <string name="nav_pastes">Pastes</string>
+    <string name="nav_account">Account</string>
 </resources>
