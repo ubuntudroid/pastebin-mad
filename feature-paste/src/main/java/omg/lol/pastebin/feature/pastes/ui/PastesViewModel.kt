@@ -58,7 +58,7 @@ class PasteViewModel @Inject constructor(
 
     /*
     Alternatively to storing the text field's state here, one could also store the paste with
-    rememberSaveable in the UI as it is ephemereal. The SavedState docs suggest this as the
+    rememberSaveable in the UI as it is ephemeral. The SavedState docs suggest this as the
     preferred approach:
     https://developer.android.com/topic/libraries/architecture/viewmodel/viewmodel-savedstate
     That approach also allows for a potentially more responsive UI and doesn't have issues like
@@ -75,10 +75,10 @@ class PasteViewModel @Inject constructor(
     source of truth. So, purely from an architecturally standpoint, this would be the "correct"
     approach.
 
-    Another advantage of this approach is that it allows the same handling for when ephemereal state
-    should modify the representation of non-ephemereal state, such as filtering a list of data
+    Another advantage of this approach is that it allows the same handling for when ephemeral state
+    should modify the representation of non-ephemeral state, such as filtering a list of data
     fetched from lower layers. This can all happen when building the UI state, creating simple to
-    grasp, consistent code. So ephemereal state is treated the same as non-ephemereal state when
+    grasp, consistent code. So ephemeral state is treated the same as non-ephemeral state when
     it comes to processing.
 
     A third approach would be to store the paste via mutableStateOf() in the ViewModel(!). This however
@@ -169,7 +169,7 @@ class PasteViewModel @Inject constructor(
 //  serialized and saved and what not).
 data class State(
     /*
-    Ephemereal state (will be saved and restored on process restore via SavedState).
+    Ephemeral state (will be saved and restored on process restore via SavedState).
 
     Usually that's stuff like in-place filtering and sorting settings, input field states,
     expanded/collapsed state, scroll/paging state, etc.

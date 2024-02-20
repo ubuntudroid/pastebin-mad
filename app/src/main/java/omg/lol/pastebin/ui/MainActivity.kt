@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
 import omg.lol.pastebin.core.ui.theme.PastebinTheme
+import omg.lol.pastebin.ui.root.MainNavHost
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

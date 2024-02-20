@@ -1,4 +1,4 @@
-package omg.lol.pastebin.ui
+package omg.lol.pastebin.ui.root
 
 import android.os.Parcelable
 import androidx.lifecycle.ViewModel

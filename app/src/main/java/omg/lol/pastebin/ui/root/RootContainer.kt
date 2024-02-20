@@ -1,4 +1,4 @@
-package omg.lol.pastebin.ui
+package omg.lol.pastebin.ui.root
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +17,7 @@ import omg.lol.pastebin.core.ui.UiResource.Loading
 import omg.lol.pastebin.core.ui.UiResource.Success
 import omg.lol.pastebin.feature.login.ui.LoginScreen
 import omg.lol.pastebin.nav.popUpToTop
+import omg.lol.pastebin.ui.main.MainScreen
 
 @Composable
 fun MainNavHost(
@@ -25,7 +26,7 @@ fun MainNavHost(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     with(state) {
-        PureMainNavHost(
+        PureRootContainer(
             modifier = modifier,
             isAuthenticatedResource = dataState.isAuthenticatedResource
         )
@@ -33,7 +34,7 @@ fun MainNavHost(
 }
 
 @Composable
-internal fun PureMainNavHost(
+internal fun PureRootContainer(
     modifier: Modifier = Modifier,
     isAuthenticatedResource: IsAuthenticatedResource?
 ) {
