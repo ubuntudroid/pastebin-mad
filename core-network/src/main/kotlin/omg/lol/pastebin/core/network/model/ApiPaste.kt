@@ -8,7 +8,7 @@ import kotlin.time.Duration.Companion.seconds
 @Serializable
 data class ApiPaste(
     @SerialName("title")
-    val title: String,
+    val title: String, // also the ID and therefore unique
     @SerialName("content")
     val content: String,
     @SerialName("listed")

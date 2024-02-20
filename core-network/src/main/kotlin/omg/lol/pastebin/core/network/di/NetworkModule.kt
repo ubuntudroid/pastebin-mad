@@ -13,6 +13,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.DefaultJson
@@ -22,6 +23,9 @@ import omg.lol.pastebin.core.model.DataResource
 import omg.lol.pastebin.core.model.paste.Paste
 import omg.lol.pastebin.core.network.PasteApiDataSource
 import omg.lol.pastebin.core.network.PasteRemoteDataSource
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -40,6 +44,9 @@ interface NetworkModule {
         fun provideHttpClient(json: Json): HttpClient {
             return HttpClient(OkHttp) {
                 expectSuccess = true
+                defaultRequest {
+                    url("https://api.omg.lol/address/")
+                }
                 install(ContentNegotiation) {
                     json(json = json)
                 }
@@ -62,12 +69,34 @@ interface NetworkModule {
     }
 }
 
-class FakePasteRemoteDataSource @AssistedInject constructor(@Assisted private val data: DataResource<List<Paste>>) : PasteRemoteDataSource {
-    override suspend fun getPastebin(address: String, apiKey: String): DataResource<List<Paste>> =
-        data
+class FakePasteRemoteDataSource @AssistedInject constructor(
+    @Assisted pastes: List<Paste>
+) : PasteRemoteDataSource {
+
+    private val pastes = pastes.associateBy { it.title }.toMutableMap()
+
+    override suspend fun getPastebin(
+        address: String,
+        apiKey: String
+    ): DataResource<List<Paste>> =
+        DataResource.Success(pastes.values.toList())
+
+    override suspend fun createOrUpdatePaste(
+        title: String,
+        content: String,
+        address: String,
+        apiKey: String
+    ): DataResource<String> {
+        pastes[title] = Paste(
+            title = title,
+            content = content,
+            modifiedOn = System.currentTimeMillis().milliseconds
+        )
+        return DataResource.Success(title)
+    }
 }
 
 @AssistedFactory
 interface FakePasteRemoteDataSourceFactory {
-    fun create(data: DataResource<List<Paste>>): FakePasteRemoteDataSource;
+    fun create(pastes: List<Paste>): FakePasteRemoteDataSource;
 }

@@ -40,13 +40,14 @@ interface DataModule {
 
 @VisibleForTesting
 class FakePastebinRepository @Inject constructor() : PastebinRepository {
-    private val data = mutableListOf<Paste>()
+    private val data = mutableMapOf<String, Paste>()
 
     override val pastes: Flow<DataResource<List<Paste>>>
-        get() = flow { emit(DataResource.Success(data.toList())) }
+        get() = flow { emit(DataResource.Success(data.values.toList())) }
 
-    override suspend fun add(title: String, content: String) {
-        data.add(0, Paste(title, content, System.currentTimeMillis().milliseconds))
+    override suspend fun insertOrUpdate(title: String, content: String): DataResource<String> {
+        data[title] = Paste(title, content, System.currentTimeMillis().milliseconds)
+        return DataResource.Success(title)
     }
 }
 

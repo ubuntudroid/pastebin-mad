@@ -28,10 +28,10 @@ interface PasteDao {
     fun getPastes(): Flow<List<DbPaste>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPaste(item: DbPaste)
+    suspend fun insertOrUpdatePaste(item: DbPaste)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPastes(items: List<DbPaste>)
+    suspend fun insertOrUpdatePastes(items: List<DbPaste>)
 
     @Delete
     suspend fun deletePaste(item: DbPaste)

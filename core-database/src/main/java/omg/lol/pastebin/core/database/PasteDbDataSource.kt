@@ -11,8 +11,8 @@ import javax.inject.Inject
 
 interface PasteLocalDataSource {
     fun getPastes(): Flow<DataResource<List<DbPaste>>>
-    suspend fun insertPaste(item: DbPaste): DataResource<Unit>
-    suspend fun insertPastes(items: List<DbPaste>): DataResource<Unit>
+    suspend fun insertOrUpdatePaste(item: DbPaste): DataResource<String>
+    suspend fun insertOrUpdatePastes(items: List<DbPaste>): DataResource<List<String>>
 }
 
 class PasteDbDataSource @Inject constructor(private val pasteDao: PasteDao) : PasteLocalDataSource {
@@ -21,18 +21,18 @@ class PasteDbDataSource @Inject constructor(private val pasteDao: PasteDao) : Pa
             .map<List<DbPaste>, DataResource<List<DbPaste>>> { DataResource.Success(it) }
             .catch { emit(DataResource.Failure.ClientError(it)) }
 
-    override suspend fun insertPaste(item: DbPaste): DataResource<Unit> = try {
-        pasteDao.insertPaste(item)
-        DataResource.Success(Unit)
+    override suspend fun insertOrUpdatePaste(item: DbPaste): DataResource<String> = try {
+        pasteDao.insertOrUpdatePaste(item)
+        DataResource.Success(item.title)
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {
         DataResource.Failure.ClientError(e)
     }
 
-    override suspend fun insertPastes(items: List<DbPaste>): DataResource<Unit> = try {
-        pasteDao.insertPastes(items)
-        DataResource.Success(Unit)
+    override suspend fun insertOrUpdatePastes(items: List<DbPaste>): DataResource<List<String>> = try {
+        pasteDao.insertOrUpdatePastes(items)
+        DataResource.Success(items.map { it.title })
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {

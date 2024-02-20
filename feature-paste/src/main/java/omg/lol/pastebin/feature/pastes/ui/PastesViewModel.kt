@@ -26,6 +26,7 @@ import omg.lol.pastebin.core.ui.UiResource
 import omg.lol.pastebin.core.ui.UiResource.Failure
 import omg.lol.pastebin.core.ui.UiResource.Loading
 import omg.lol.pastebin.core.ui.UiResource.Success
+import omg.lol.pastebin.core.ui.mapToUiResource
 import omg.lol.pastebin.core.ui.toCatchingUiResourceFlow
 import omg.lol.pastebin.core.util.sharedFlowSafeOnStart
 import omg.lol.pastebin.platform.ClipboardRepository
@@ -137,14 +138,15 @@ class PasteViewModel @Inject constructor(
         pasteSavingResource.value = Loading
         viewModelScope.launch {
             try {
-                pastebinRepository.add(title, content)
-                pasteSavingResource.value = Success(Unit)
-                pasteTitleInput.value = ParcelableTextFieldValue(TextFieldValue())
-                pasteContentInput.value = ParcelableTextFieldValue(TextFieldValue())
+                val uiResource = pastebinRepository.insertOrUpdate(title, content).mapToUiResource()
+                pasteSavingResource.value = uiResource
+                if (uiResource is Success) {
+                    // clear the inputs
+                    pasteTitleInput.value = ParcelableTextFieldValue(TextFieldValue())
+                    pasteContentInput.value = ParcelableTextFieldValue(TextFieldValue())
+                }
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: Exception) {
-                pasteSavingResource.value = Failure(e)
             }
         }
     }
@@ -202,4 +204,4 @@ data class DataState(
 )
 
 typealias PastesResource = UiResource<List<Paste>>
-typealias PasteSavingResource = UiResource<Unit>
+typealias PasteSavingResource = UiResource<String>

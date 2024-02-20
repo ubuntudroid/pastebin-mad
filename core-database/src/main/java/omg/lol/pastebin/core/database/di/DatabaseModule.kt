@@ -56,19 +56,19 @@ interface DatabaseModule {
 }
 
 class FakePasteLocalDataSource @Inject constructor() : PasteLocalDataSource {
-    private val pastesFlow = MutableStateFlow(emptyList<DbPaste>())
+    private val pastesFlow = MutableStateFlow(mutableMapOf<String, DbPaste>())
 
     override fun getPastes(): Flow<DataResource<List<DbPaste>>> =
-        pastesFlow.map { DataResource.Success(it) }
+        pastesFlow.map { DataResource.Success(it.values.toList()) }
 
-    override suspend fun insertPaste(item: DbPaste): DataResource<Unit> {
-        pastesFlow.value += item
-        return DataResource.Success(Unit)
+    override suspend fun insertOrUpdatePaste(item: DbPaste): DataResource<String> {
+        pastesFlow.value[item.title] = item
+        return DataResource.Success(item.title)
     }
 
-    override suspend fun insertPastes(items: List<DbPaste>): DataResource<Unit> {
-        pastesFlow.value += items
-        return DataResource.Success(Unit)
+    override suspend fun insertOrUpdatePastes(items: List<DbPaste>): DataResource<List<String>> {
+        pastesFlow.value.putAll(items.associateBy { it.title })
+        return DataResource.Success(items.map { it.title })
     }
 
 }

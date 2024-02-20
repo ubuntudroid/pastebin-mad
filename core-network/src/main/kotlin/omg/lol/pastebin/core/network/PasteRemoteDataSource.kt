@@ -11,12 +11,23 @@ import omg.lol.pastebin.core.model.DataResource
 import omg.lol.pastebin.core.model.paste.Paste
 import omg.lol.pastebin.core.network.model.ApiError
 import omg.lol.pastebin.core.network.model.ApiResult
+import omg.lol.pastebin.core.network.model.Response
 import omg.lol.pastebin.core.network.model.mapToPaste
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 
 interface PasteRemoteDataSource {
-    suspend fun getPastebin(address: String, apiKey: String): DataResource<List<Paste>>
+    suspend fun getPastebin(
+        address: String,
+        apiKey: String
+    ): DataResource<List<Paste>>
+
+    suspend fun createOrUpdatePaste(
+        title: String,
+        content: String,
+        address: String,
+        apiKey: String
+    ): DataResource<String>
 }
 
 class PasteApiDataSource @Inject constructor(
@@ -25,12 +36,39 @@ class PasteApiDataSource @Inject constructor(
 ) : PasteRemoteDataSource {
 
     override suspend fun getPastebin(address: String, apiKey: String): DataResource<List<Paste>> {
+        return handleRequest(
+            request = { pastebinApi.getPastebin(address, apiKey) },
+            resultMapper = { it.pastes.map { apiPaste -> apiPaste.mapToPaste() }}
+        )
+    }
+
+    override suspend fun createOrUpdatePaste(
+        title: String,
+        content: String,
+        address: String,
+        apiKey: String
+    ): DataResource<String> {
+        return handleRequest(
+            request = { pastebinApi.createOrUpdatePaste(title, content, address, apiKey) },
+            resultMapper = { it.title }
+        )
+    }
+
+    private suspend fun HttpResponse.getErrorMessage(): String {
+        val response = bodyAsText(Charsets.UTF_8)
+        return json.decodeFromString<ApiResult<ApiError>>(response).response.message
+    }
+
+    private suspend fun <T : Response, R> handleRequest(
+        request: suspend () -> ApiResult<T>,
+        resultMapper: (T) -> R
+    ): DataResource<R> {
         return try {
-            val apiResult = pastebinApi.getPastebin(address, apiKey)
+            val apiResult = request()
 
             if (apiResult.request.success) {
                 DataResource.Success(
-                    apiResult.response.pastes.map { it.mapToPaste() }
+                    apiResult.response.let(resultMapper)
                 )
             } else {
                 // server reported an error
@@ -69,10 +107,5 @@ class PasteApiDataSource @Inject constructor(
             // something went wrong while executing the request, likely a network issue
             DataResource.Failure.ClientError(e)
         }
-    }
-
-    private suspend fun HttpResponse.getErrorMessage(): String {
-        val response = bodyAsText(Charsets.UTF_8)
-        return json.decodeFromString<ApiResult<ApiError>>(response).response.message
     }
 }

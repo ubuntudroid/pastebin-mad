@@ -121,7 +121,7 @@ private fun DefaultPreview() {
                 )
             )
             ),
-            pasteSavingResource = Success(Unit),
+            pasteSavingResource = null,
             onTitleInputChange = {},
             onContentInputChange = {},
             onSave = { _, _ -> },

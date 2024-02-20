@@ -56,7 +56,7 @@ class PastesViewModelTest {
 
         viewModel.savePaste(title, content)
         advanceUntilIdle()
-        assertEquals(Success(Unit), viewModel.state.value.dataState.pasteSavingResource)
+        assertEquals(Success(title), viewModel.state.value.dataState.pasteSavingResource)
         val pastesRes = viewModel.state.value.dataState.pastesResource
         assert(pastesRes is Success) { "pastesRes is not Success, instead it is $pastesRes" }
         val pastes = (pastesRes as Success<List<Paste>>).data
