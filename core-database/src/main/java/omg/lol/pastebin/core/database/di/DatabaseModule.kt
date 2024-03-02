@@ -20,6 +20,7 @@ import omg.lol.pastebin.core.database.pastebin.model.DbPaste
 import omg.lol.pastebin.core.database.pastebin.model.PasteDao
 import omg.lol.pastebin.core.database.user.model.UserDao
 import omg.lol.pastebin.core.model.DataResource
+import java.lang.RuntimeException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -66,9 +67,46 @@ class FakePasteLocalDataSource @Inject constructor() : PasteLocalDataSource {
         return DataResource.Success(item.title)
     }
 
-    override suspend fun insertOrUpdatePastes(items: List<DbPaste>): DataResource<List<String>> {
-        pastesFlow.value.putAll(items.associateBy { it.title })
+    override suspend fun insertOrUpdatePastes(
+        items: List<DbPaste>,
+        overrideUnsynced: Boolean
+    ): DataResource<List<String>> {
+        if (overrideUnsynced) {
+            pastesFlow.value.putAll(items.associateBy { it.title })
+        } else {
+            val unsyncedPasteIds = pastesFlow.value.filter { !it.value.isSynced }.keys
+            pastesFlow.value.putAll(items.filter { it.title !in unsyncedPasteIds }.associateBy { it.title })
+        }
         return DataResource.Success(items.map { it.title })
+    }
+
+    override suspend fun deletePaste(title: String): DataResource<Unit> {
+        pastesFlow.value.remove(title)
+        return DataResource.Success(Unit)
+    }
+
+    override suspend fun deletePastes(items: List<String>): DataResource<Int> {
+        var removedCount = 0
+        items.forEach {
+            val removedPaste = pastesFlow.value.remove(it)
+            if (removedPaste != null) {
+                removedCount++
+            }
+        }
+        return DataResource.Success(removedCount)
+    }
+
+    override suspend fun deleteAllPastes(): DataResource<Int> {
+        val removedCount = pastesFlow.value.size
+        pastesFlow.value.clear()
+        return DataResource.Success(removedCount)
+    }
+
+    override suspend fun markAsSynced(title: String): DataResource<String> {
+        pastesFlow.value[title]?.copy(isSynced = true)?.also { pastesFlow.value[title] = it }
+            ?: return DataResource.Failure.ClientError(RuntimeException("Paste not found"))
+
+        return DataResource.Success(title)
     }
 
 }

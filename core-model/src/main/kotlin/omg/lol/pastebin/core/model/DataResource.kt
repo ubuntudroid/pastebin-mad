@@ -8,17 +8,22 @@ sealed class DataResource<out T> {
 
     sealed class Failure<out T> : DataResource<T>() {
         data class ClientError<out T>(
-            val error: Throwable
-        ) : Failure<T>()
+            val error: Throwable,
+            val message: String? = error.message
+        ) : Failure<T>() {
+            override val isRecoverable: Boolean = true
+        }
 
         data class RemoteError<out T>(
             val statusCode: Int,
             val message: String,
-        ) : Failure<T>()
+        ) : Failure<T>() {
+            override val isRecoverable: Boolean = statusCode in listOf(408, 425, 429, 500, 502, 503, 504)
+        }
 
         fun <R> mapFailure(transformMessage: (oldMessage: String) -> String = { it }): DataResource<R> =
             when (this) {
-                is ClientError -> ClientError(error)
+                is ClientError -> ClientError(error, transformMessage(error.message ?: ""))
                 is RemoteError -> RemoteError(statusCode, transformMessage(message))
             }
 
@@ -33,6 +38,8 @@ sealed class DataResource<out T> {
                 }
             }
         }
+
+        abstract val isRecoverable: Boolean
     }
 
     fun logIfFailure(tag: String, message: String) {

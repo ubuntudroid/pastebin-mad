@@ -3,4 +3,5 @@
     <string name="title_input_label">Paste Title</string>
     <string name="content_input_label">Paste Content</string>
     <string name="pastes_not_found">No pastes found</string>
+    <string name="paste_not_synced">Not yet synced</string>
 </resources>

@@ -51,9 +51,7 @@ class DefaultPastebinRepository @Inject constructor(
 
                 // load data from remote source (API)
                 val pastebinDataRes =
-                    pasteRemoteDataSource.getPastebin(user.name, user.apiKey).apply {
-                        logIfFailure(TAG, "Failed to fetch pastebin")
-                    }
+                    pasteRemoteDataSource.getPastebin(user.name, user.apiKey)
                 when (pastebinDataRes) {
                     is Failure -> {
                         // there was some error fetching data from remote, use local data instead
@@ -72,7 +70,10 @@ class DefaultPastebinRepository @Inject constructor(
                     is Success -> try {
                         // insert fetched data into local data source (DB)
                         val dataResource =
-                            pasteLocalDataSource.insertOrUpdatePastes(pastebinDataRes.data.map { it.mapToDbPaste() })
+                            pasteLocalDataSource.insertOrUpdatePastes(
+                                items = pastebinDataRes.data.map { it.mapToDbPaste().copy(isSynced = true) },
+                                overrideUnsynced = false
+                            )
                         when (dataResource) {
                             is Success -> {
                                 // collect from local data source
@@ -117,12 +118,15 @@ class DefaultPastebinRepository @Inject constructor(
                 DbPaste(
                     title = title,
                     content = content,
-                    modifiedOnEpochSec = System.currentTimeMillis().milliseconds.inWholeSeconds
+                    // this will be overridden by the server upon upload/sync
+                    modifiedOnEpochSec = System.currentTimeMillis().milliseconds.inWholeSeconds,
+                    isSynced = false
                 )
             )
 
             return when (localResult) {
                 is Failure -> {
+                    localResult.log(TAG, "Failed to insert paste into local data source")
                     // there was an error inserting the paste into the local
                     //  data source, give up and let the user retry
                     localResult
@@ -136,19 +140,23 @@ class DefaultPastebinRepository @Inject constructor(
                     )
                     when (remoteResult) {
                         is Failure -> {
-                            // TODO #2 mark in DB to try again later if the error is recoverable
-                            // - client error -> recoverable
-                            // - remote error -> check based on status code (maybe introduce an
-                            //     isRecoverable property in RemoteError which handles this
-                            //     centrally?
-                            // Marking should happen in the database. We will periodically walk
-                            //   through marked entries in #7.
+                            remoteResult.log(TAG, "Failed to upload paste to server")
 
-                            // not necessary to tell user about a recoverable error
-                            return Success(title)
+                            if (remoteResult.isRecoverable) {
+                                // not necessary to tell user about a recoverable error, we will
+                                //  try to sync later automatically
+                                return Success(title)
+                            } else {
+                                // revert insertion
+                                // TODO #2 we would actually have to revert to the last state in the DB if this is an update and not an insertion
+                                pasteLocalDataSource.deletePaste(title).logIfFailure(TAG, "Failed to revert paste")
+                                return remoteResult.mapFailure(
+                                    transformMessage = { "Failed to upload paste to server: $it" }
+                                )
+                            }
                         }
                         is Success -> {
-                            // TODO #2 mark as synced in DB
+                            pasteLocalDataSource.markAsSynced(title)
                             return remoteResult
                         }
                     }
