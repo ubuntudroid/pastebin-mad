@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 
 /**
- * Alternative [Flow.onStart()][kotlinx.coroutines.flow.onStart] implementation which guarantees that emissions from [action] are emitted
+ * Alternative [Flow.onStart()][kotlinx.coroutines.flow.onStart] implementation which guarantees that emissions from [action] are collected
  * even if a downstream flow is a SharedFlow.
  *
  * From [Flow.onStart() docs][kotlinx.coroutines.flow.onStart]:
